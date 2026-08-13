@@ -9,36 +9,37 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&family=Parisienne&display=swap" rel="stylesheet">
 <style>
   /* ====== CONFIG EDITABLE (cambiá estos valores) ====== */
-  /* La fecha, el lugar y la URL del Apps Script se editan abajo en el <script>. */
+  /* La fecha, el lugar, textos y la URL del Apps Script se editan abajo en el <script>. */
 
   :root{
-    --cream:#fffbf9;
-    --blush-light:#fef5f7;
-    --blush:#fbeaed;
-    --blush-mid:#f6d9df;
-    --blush-deep:#cf94a2;   /* dusty rose para acentos de texto */
-    --rose-ink:#7f5c63;     /* texto malva apagado, algo más oscuro para leer */
-    --rose-soft:#a8838f;
-    --gold-a:#a87a40;       /* rose gold antiguo (oscuro, da contraste) */
-    --gold-b:#cda05a;
-    --gold-c:#f0d9a3;       /* brillo claro */
-    --gold-d:#bd8f48;       /* acento/borde legible */
+    --cream:#fdf6f2;
+    --wine-light:#f7e7e9;
+    --wine-blush:#f0d3d8;
+    --wine-mid:#c98d98;
+    --wine-deep:#6d1220;    /* burdeos principal */
+    --wine-ink:#4a0e18;     /* burdeos oscuro para texto fuerte */
+    --wine-soft:#8c4450;    /* burdeos suave para texto secundario */
+    --gold-a:#a8763a;
+    --gold-b:#cfa356;
+    --gold-c:#f0d9a3;
+    --gold-d:#b5872f;
     --white:#ffffff;
-    --shadow:rgba(190,140,155,.13);
+    --shadow:rgba(109,18,32,.16);
   }
 
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{height:100%;}
   body{
     font-family:'Jost',sans-serif;
-    color:var(--rose-ink);
+    color:var(--wine-ink);
     background:
-      radial-gradient(125% 85% at 50% -10%, #ffffff 0%, var(--cream) 22%, var(--blush-light) 52%, var(--blush) 82%, var(--blush-mid) 100%);
+      radial-gradient(125% 85% at 50% -10%, #ffffff 0%, var(--cream) 22%, var(--wine-light) 55%, var(--wine-blush) 100%);
     background-attachment:fixed;
     overflow-x:hidden;
     position:relative;
     min-height:100vh;
   }
+  body.locked{overflow:hidden;height:100vh;}
 
   /* shimmering moving mesh */
   body::before{
@@ -46,9 +47,9 @@
     position:fixed; inset:-40%;
     background:
       radial-gradient(40% 40% at 20% 25%, rgba(255,255,255,.5), transparent 60%),
-      radial-gradient(35% 35% at 85% 20%, rgba(249,226,231,.55), transparent 60%),
-      radial-gradient(45% 45% at 75% 85%, rgba(217,193,149,.14), transparent 60%),
-      radial-gradient(40% 40% at 10% 80%, rgba(240,205,213,.45), transparent 60%);
+      radial-gradient(35% 35% at 85% 20%, rgba(201,141,152,.35), transparent 60%),
+      radial-gradient(45% 45% at 75% 85%, rgba(181,135,47,.14), transparent 60%),
+      radial-gradient(40% 40% at 10% 80%, rgba(109,18,32,.10), transparent 60%);
     filter:blur(10px);
     animation:drift 22s ease-in-out infinite alternate;
     z-index:0; pointer-events:none;
@@ -68,14 +69,30 @@
   #sparkles,#particles{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden;}
   .spark{position:absolute;background:radial-gradient(circle,#fff 0%,var(--gold-c) 45%,transparent 72%);border-radius:50%;opacity:0;animation:twinkle var(--dur) ease-in-out infinite;}
   @keyframes twinkle{0%,100%{opacity:0;transform:scale(.3);}50%{opacity:.8;transform:scale(1);}}
-  .floatie{position:absolute;bottom:-20px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95),var(--gold-d));box-shadow:0 0 6px rgba(217,193,149,.55);opacity:0;animation:rise var(--dur) linear infinite;}
+  .floatie{position:absolute;bottom:-20px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.95),var(--gold-d));box-shadow:0 0 6px rgba(207,163,86,.55);opacity:0;animation:rise var(--dur) linear infinite;}
   @keyframes rise{0%{transform:translateY(0) translateX(0);opacity:0;}12%{opacity:.5;}88%{opacity:.35;}100%{transform:translateY(-115vh) translateX(var(--drift));opacity:0;}}
 
   .wrap{position:relative;z-index:3;max-width:460px;margin:0 auto;padding:0 22px 70px;}
 
+  /* ===== GATE (pantalla de bienvenida) ===== */
+  .gate{
+    position:fixed;inset:0;z-index:50;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:32px;
+    background:radial-gradient(125% 85% at 50% -10%, #ffffff 0%, var(--cream) 22%, var(--wine-light) 55%, var(--wine-blush) 100%);
+    transition:opacity .7s ease, visibility .7s ease;
+  }
+  .gate.hide{opacity:0;visibility:hidden;pointer-events:none;}
+  .gate-kicker{font-size:12px;letter-spacing:.5em;text-transform:uppercase;color:var(--wine-soft);margin-bottom:10px;}
+  .gate-name{font-family:'Parisienne',cursive;font-size:clamp(52px,16vw,72px);color:var(--wine-deep);margin-bottom:6px;}
+  .gate-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--wine-soft);max-width:280px;line-height:1.5;margin-bottom:30px;}
+  .gate-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:260px;}
+  .gate-btn{padding:15px;border-radius:40px;border:1px solid var(--gold-d);background:linear-gradient(135deg,var(--gold-a),var(--gold-d) 60%,var(--wine-mid));color:#fff;font-family:'Jost';font-size:13px;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;box-shadow:0 10px 24px var(--shadow);}
+  .gate-btn.ghost{background:rgba(255,255,255,.55);color:var(--wine-deep);}
+
   /* ===== HERO ===== */
   .hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 0 36px;}
-  .kicker{font-size:13px;letter-spacing:.62em;text-transform:uppercase;font-weight:400;color:var(--rose-soft);padding-left:.62em;opacity:0;animation:up .9s .2s forwards;}
+  .kicker{font-size:13px;letter-spacing:.62em;text-transform:uppercase;font-weight:400;color:var(--wine-soft);padding-left:.62em;opacity:0;animation:up .9s .2s forwards;}
   .ornament{display:flex;align-items:center;gap:12px;margin:14px 0 4px;opacity:0;animation:up .9s .35s forwards;}
   .ornament .line{height:1px;width:54px;background:linear-gradient(90deg,transparent,var(--gold-d));}
   .ornament .line.r{background:linear-gradient(90deg,var(--gold-d),transparent);}
@@ -85,29 +102,29 @@
     font-size:clamp(78px,27vw,128px);
     line-height:.9;
     margin:6px 0 2px;
-    background:linear-gradient(105deg,var(--gold-a),var(--gold-b) 30%,var(--gold-c) 48%,var(--gold-b) 62%,var(--gold-a));
+    background:linear-gradient(105deg,var(--wine-deep),var(--gold-b) 30%,var(--gold-c) 48%,var(--gold-b) 62%,var(--wine-deep));
     background-size:250% 250%;
     -webkit-background-clip:text;background-clip:text;
     -webkit-text-fill-color:transparent;color:transparent;
-    filter:drop-shadow(0 2px 5px rgba(127,92,99,.28)) drop-shadow(0 4px 16px rgba(189,143,72,.3));
+    filter:drop-shadow(0 2px 5px rgba(74,14,24,.28)) drop-shadow(0 4px 16px rgba(181,135,47,.3));
     animation:shimmer 6s ease-in-out infinite, up 1s .5s both;
   }
   @keyframes shimmer{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
-  .mis15{font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;font-size:clamp(26px,8vw,36px);color:var(--blush-deep);letter-spacing:.04em;margin-top:2px;opacity:0;animation:up .9s .7s forwards;}
+  .mis15{font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;font-size:clamp(26px,8vw,36px);color:var(--wine-deep);letter-spacing:.04em;margin-top:2px;opacity:0;animation:up .9s .7s forwards;}
   .quince-badge{
     margin:22px auto 0;width:104px;height:104px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
     border:1.5px solid var(--gold-d);
-    background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.9),rgba(251,228,233,.6));
-    box-shadow:0 8px 30px var(--shadow),inset 0 0 18px rgba(236,220,180,.4);
+    background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.9),rgba(240,211,216,.6));
+    box-shadow:0 8px 30px var(--shadow),inset 0 0 18px rgba(240,217,163,.4);
     position:relative;opacity:0;animation:pop 1s .9s both;
   }
-  .quince-badge::before,.quince-badge::after{content:"";position:absolute;inset:7px;border-radius:50%;border:1px solid rgba(217,193,149,.45);}
-  .quince-badge::after{inset:12px;border-style:dashed;border-color:rgba(217,193,149,.3);}
-  .quince-badge span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:46px;background:linear-gradient(120deg,var(--gold-a),var(--gold-b) 50%,var(--gold-a));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-  .hero-date{margin-top:26px;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.22em;color:var(--rose-ink);opacity:0;animation:up .9s 1.1s forwards;}
+  .quince-badge::before,.quince-badge::after{content:"";position:absolute;inset:7px;border-radius:50%;border:1px solid rgba(181,135,47,.45);}
+  .quince-badge::after{inset:12px;border-style:dashed;border-color:rgba(181,135,47,.3);}
+  .quince-badge span{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:46px;background:linear-gradient(120deg,var(--wine-deep),var(--gold-b) 50%,var(--wine-deep));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .hero-date{margin-top:26px;font-family:'Cormorant Garamond',serif;font-size:22px;letter-spacing:.22em;color:var(--wine-ink);opacity:0;animation:up .9s 1.1s forwards;}
   .hero-date b{font-weight:600;}
-  .scroll-cue{margin-top:34px;font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--rose-soft);opacity:0;animation:up .9s 1.4s forwards, bob 2.2s 1.4s ease-in-out infinite;}
+  .scroll-cue{margin-top:34px;font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--wine-soft);opacity:0;animation:up .9s 1.4s forwards, bob 2.2s 1.4s ease-in-out infinite;}
 
   @keyframes up{from{opacity:0;transform:translateY(22px);}to{opacity:1;transform:translateY(0);}}
   @keyframes pop{0%{opacity:0;transform:scale(.6);}60%{transform:scale(1.08);}100%{opacity:1;transform:scale(1);}}
@@ -116,8 +133,8 @@
   /* ===== SECTION SHELL ===== */
   .reveal{opacity:0;transform:translateY(34px);transition:opacity .9s ease,transform .9s ease;}
   .reveal.in{opacity:1;transform:none;}
-  .sec-title{font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;font-size:30px;text-align:center;color:var(--blush-deep);margin-bottom:6px;}
-  .sec-sub{text-align:center;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--rose-soft);margin-bottom:22px;}
+  .sec-title{font-family:'Cormorant Garamond',serif;font-weight:500;font-style:italic;font-size:30px;text-align:center;color:var(--wine-deep);margin-bottom:6px;}
+  .sec-sub{text-align:center;font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--wine-soft);margin-bottom:22px;}
 
   .glass{
     background:linear-gradient(160deg,rgba(255,255,255,.72),rgba(255,255,255,.42));
@@ -127,40 +144,39 @@
     box-shadow:0 16px 40px var(--shadow),inset 0 1px 0 rgba(255,255,255,.9);
     position:relative;overflow:hidden;
   }
-  .glass::before{content:"";position:absolute;inset:0;border-radius:26px;padding:1px;background:linear-gradient(135deg,rgba(236,220,180,.6),transparent 40%,transparent 70%,rgba(217,193,149,.45));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+  .glass::before{content:"";position:absolute;inset:0;border-radius:26px;padding:1px;background:linear-gradient(135deg,rgba(240,217,163,.6),transparent 40%,transparent 70%,rgba(181,135,47,.45));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
 
   /* ===== COUNTDOWN ===== */
   .countdown{margin-top:6px;padding:26px 16px;display:flex;justify-content:space-between;gap:8px;}
   .cd-cell{flex:1;text-align:center;}
-  .cd-num{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(34px,11vw,46px);line-height:1;background:linear-gradient(160deg,var(--gold-a),var(--gold-b) 44%,var(--gold-c) 52%,var(--gold-b) 60%,var(--gold-a));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 2px rgba(127,92,99,.22));}
-  .cd-lbl{margin-top:8px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--rose-soft);}
-  .cd-sep{align-self:center;font-family:'Cormorant Garamond',serif;font-size:30px;color:rgba(217,193,149,.5);margin-top:-12px;}
+  .cd-num{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:clamp(34px,11vw,46px);line-height:1;background:linear-gradient(160deg,var(--wine-deep),var(--gold-b) 44%,var(--gold-c) 52%,var(--gold-b) 60%,var(--wine-deep));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 2px rgba(74,14,24,.22));}
+  .cd-lbl{margin-top:8px;font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:var(--wine-soft);}
+  .cd-sep{align-self:center;font-family:'Cormorant Garamond',serif;font-size:30px;color:rgba(181,135,47,.5);margin-top:-12px;}
 
-  /* ===== DETAILS ===== */
-  .detail{padding:26px 24px;margin-top:22px;text-align:center;}
-  .detail .row{display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 0;}
-  .detail .row + .row{border-top:1px solid rgba(217,193,149,.2);}
-  .detail .ico{font-size:22px;margin-bottom:4px;}
-  .detail .lab{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--rose-soft);}
-  .detail .val{font-family:'Cormorant Garamond',serif;font-size:23px;color:var(--rose-ink);font-weight:500;}
-  .detail .val small{display:block;font-family:'Jost';font-size:13px;color:var(--rose-soft);letter-spacing:.04em;margin-top:2px;}
-  .map-btn{margin-top:14px;display:inline-flex;align-items:center;gap:9px;padding:13px 26px;border-radius:40px;border:1px solid var(--gold-d);background:linear-gradient(135deg,rgba(255,255,255,.6),rgba(251,228,233,.5));color:var(--blush-deep);font-size:12px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;font-weight:500;transition:transform .25s,box-shadow .25s;box-shadow:0 6px 18px rgba(217,193,149,.2);}
-  .map-btn:active{transform:scale(.96);}
+  /* ===== DETAILS (dos tarjetas: día / lugar) ===== */
+  .detail-cards{display:flex;flex-direction:column;gap:16px;margin-top:6px;}
+  .detail{padding:24px 22px;text-align:center;}
+  .detail .ico{font-size:24px;margin-bottom:6px;}
+  .detail .lab{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--wine-soft);}
+  .detail .val{font-family:'Cormorant Garamond',serif;font-size:23px;color:var(--wine-ink);font-weight:500;margin-top:4px;}
+  .detail .val small{display:block;font-family:'Jost';font-size:13px;color:var(--wine-soft);letter-spacing:.04em;margin-top:2px;}
+  .pill-btn{margin-top:14px;display:inline-flex;align-items:center;gap:9px;padding:13px 26px;border-radius:40px;border:1px solid var(--gold-d);background:linear-gradient(135deg,rgba(255,255,255,.6),rgba(240,211,216,.5));color:var(--wine-deep);font-size:12px;letter-spacing:.16em;text-transform:uppercase;text-decoration:none;font-weight:500;transition:transform .25s,box-shadow .25s;box-shadow:0 6px 18px rgba(181,135,47,.2);cursor:pointer;}
+  .pill-btn:active{transform:scale(.96);}
 
   /* ===== RSVP ===== */
   .rsvp{padding:30px 24px 32px;margin-top:22px;}
   .field{margin-bottom:18px;}
-  .field label{display:block;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--rose-soft);margin-bottom:9px;}
-  .field input[type=text]{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(217,193,149,.4);background:rgba(255,255,255,.65);font-family:'Jost';font-size:16px;color:var(--rose-ink);outline:none;transition:border .25s,box-shadow .25s;}
-  .field input[type=text]:focus{border-color:var(--gold-d);box-shadow:0 0 0 3px rgba(236,220,180,.3);}
+  .field label{display:block;font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--wine-soft);margin-bottom:9px;}
+  .field input[type=text]{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(181,135,47,.4);background:rgba(255,255,255,.65);font-family:'Jost';font-size:16px;color:var(--wine-ink);outline:none;transition:border .25s,box-shadow .25s;}
+  .field input[type=text]:focus{border-color:var(--gold-d);box-shadow:0 0 0 3px rgba(240,217,163,.3);}
   .toggle{display:flex;gap:10px;}
-  .toggle button{flex:1;padding:13px;border-radius:14px;border:1px solid rgba(217,193,149,.4);background:rgba(255,255,255,.55);font-family:'Jost';font-size:14px;letter-spacing:.05em;color:var(--rose-soft);cursor:pointer;transition:all .22s;}
-  .toggle button.act{background:linear-gradient(135deg,var(--blush-mid),var(--blush-deep));color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(200,150,165,.4);}
+  .toggle button{flex:1;padding:13px;border-radius:14px;border:1px solid rgba(181,135,47,.4);background:rgba(255,255,255,.55);font-family:'Jost';font-size:14px;letter-spacing:.05em;color:var(--wine-soft);cursor:pointer;transition:all .22s;}
+  .toggle button.act{background:linear-gradient(135deg,var(--wine-mid),var(--wine-deep));color:#fff;border-color:transparent;box-shadow:0 6px 16px rgba(109,18,32,.35);}
   .stepper{display:flex;align-items:center;justify-content:center;gap:22px;}
-  .stepper button{width:46px;height:46px;border-radius:50%;border:1px solid var(--gold-d);background:rgba(255,255,255,.6);font-size:24px;color:var(--blush-deep);cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:transform .2s;}
+  .stepper button{width:46px;height:46px;border-radius:50%;border:1px solid var(--gold-d);background:rgba(255,255,255,.6);font-size:24px;color:var(--wine-deep);cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:transform .2s;}
   .stepper button:active{transform:scale(.9);}
-  .stepper .count{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;min-width:48px;text-align:center;color:var(--rose-ink);}
-  .submit{width:100%;margin-top:8px;padding:16px;border:none;border-radius:40px;font-family:'Jost';font-size:14px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--gold-a),var(--gold-d) 45%,var(--blush-mid));background-size:200% 200%;box-shadow:0 10px 26px rgba(200,150,165,.45);transition:transform .25s,background-position .6s;}
+  .stepper .count{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:40px;min-width:48px;text-align:center;color:var(--wine-ink);}
+  .submit{width:100%;margin-top:8px;padding:16px;border:none;border-radius:40px;font-family:'Jost';font-size:14px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;color:#fff;cursor:pointer;background:linear-gradient(135deg,var(--gold-a),var(--gold-d) 45%,var(--wine-mid));background-size:200% 200%;box-shadow:0 10px 26px rgba(109,18,32,.35);transition:transform .25s,background-position .6s;}
   .submit:hover{background-position:100% 50%;}
   .submit:active{transform:scale(.97);}
   .submit:disabled{opacity:.6;cursor:default;}
@@ -168,19 +184,49 @@
   .thanks{display:none;text-align:center;padding:14px 4px;}
   .thanks.show{display:block;animation:pop .7s both;}
   .thanks .heart{font-size:46px;}
-  .thanks h3{font-family:'Parisienne',cursive;font-size:42px;color:var(--blush-deep);margin:4px 0 6px;}
-  .thanks p{font-size:14px;color:var(--rose-soft);line-height:1.6;}
+  .thanks h3{font-family:'Parisienne',cursive;font-size:42px;color:var(--wine-deep);margin:4px 0 6px;}
+  .thanks p{font-size:14px;color:var(--wine-soft);line-height:1.6;}
+
+  /* ===== MÚSICA ===== */
+  .music{padding:28px 24px;margin-top:22px;text-align:center;}
+  .music p.desc{font-size:14px;color:var(--wine-soft);line-height:1.6;margin-bottom:16px;}
+  .music .field{text-align:left;}
+  .music-thanks{display:none;font-size:14px;color:var(--wine-soft);margin-top:6px;}
+  .music-thanks.show{display:block;}
+
+  /* ===== INFO CARDS (dress code / tips / regalos) ===== */
+  .info-card{padding:26px 24px;margin-top:16px;text-align:center;}
+  .info-card .ico{font-size:26px;margin-bottom:8px;}
+  .info-card h3{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:20px;letter-spacing:.08em;color:var(--wine-deep);margin-bottom:10px;text-transform:uppercase;}
+  .info-card p{font-size:14px;line-height:1.7;color:var(--wine-soft);}
+  .info-card p b{color:var(--wine-ink);font-weight:600;}
+
+  /* ===== INSTAGRAM ===== */
+  .insta{padding:30px 24px;margin-top:22px;text-align:center;}
+  .insta .hashtag{font-family:'Parisienne',cursive;font-size:38px;color:var(--wine-deep);margin:8px 0 16px;}
 
   .footer{text-align:center;margin-top:46px;}
-  .footer .seal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:21px;color:var(--blush-deep);}
-  .footer .small{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--rose-soft);margin-top:8px;}
+  .footer .seal{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:21px;color:var(--wine-deep);}
+  .footer .small{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:var(--wine-soft);margin-top:8px;}
   .heart-pulse{display:inline-block;animation:hb 1.6s ease-in-out infinite;}
   @keyframes hb{0%,100%{transform:scale(1);}50%{transform:scale(1.18);}}
 </style>
 </head>
-<body>
+<body class="locked">
 <div id="sparkles"></div>
 <div id="particles"></div>
+
+<!-- GATE / BIENVENIDA -->
+<div class="gate" id="gate">
+  <div class="gate-kicker">Bienvenidos a la invitación de</div>
+  <div class="gate-name">More</div>
+  <div class="gate-sub">La música de fondo es parte de la experiencia. Elegí cómo querés ingresar.</div>
+  <div class="gate-btns">
+    <button class="gate-btn" id="enterMusic">Ingresar con música ✦</button>
+    <button class="gate-btn ghost" id="enterSilent">Ingresar sin música</button>
+  </div>
+</div>
+<audio id="bgAudio" loop preload="none"></audio>
 
 <div class="wrap">
 
@@ -212,19 +258,20 @@
 
   <!-- DETAILS -->
   <section class="reveal">
-    <h2 class="sec-title">Los detalles</h2>
+    <h2 class="sec-title">La fiesta</h2>
     <p class="sec-sub">anotá en tu agenda</p>
-    <div class="glass detail">
-      <div class="row">
+    <div class="detail-cards">
+      <div class="glass detail">
         <div class="ico">🗓️</div>
-        <div class="lab">Cuándo</div>
+        <div class="lab">Día</div>
         <div class="val">Sábado 12 de diciembre<small>21:00 hs</small></div>
+        <a class="pill-btn" id="agendarBtn" target="_blank" rel="noopener">✦ Agendar</a>
       </div>
-      <div class="row">
+      <div class="glass detail">
         <div class="ico">📍</div>
-        <div class="lab">Dónde</div>
+        <div class="lab">Lugar</div>
         <div class="val">Pilar del Este<small id="addr">Pilar, Buenos Aires</small></div>
-        <a class="map-btn" id="mapBtn" target="_blank" rel="noopener">✦ Cómo llegar</a>
+        <a class="pill-btn" id="mapBtn" target="_blank" rel="noopener">✦ Cómo llegar</a>
       </div>
     </div>
   </section>
@@ -264,6 +311,58 @@
     </div>
   </section>
 
+  <!-- MÚSICA -->
+  <section class="reveal">
+    <h2 class="sec-title">Música</h2>
+    <p class="sec-sub">ayudanos a armar la playlist</p>
+    <div class="glass music">
+      <p class="desc">¿Cuál es la canción que no puede faltar en la fiesta?</p>
+      <div id="musicForm">
+        <div class="field">
+          <input type="text" id="cancion" placeholder="Artista - Título de la canción" />
+        </div>
+        <button class="submit" id="sendMusic">Sugerir canción ✦</button>
+      </div>
+      <p class="music-thanks" id="musicThanks">¡Gracias por tu sugerencia! 🎶</p>
+    </div>
+  </section>
+
+  <!-- DRESS CODE -->
+  <section class="reveal">
+    <div class="glass info-card">
+      <div class="ico">👗</div>
+      <h3>Dress code</h3>
+      <p><b>Elegante sport.</b><br>Evitemos el blanco y el color que use More.<br>¡Vengan con ganas de bailar toda la noche!</p>
+    </div>
+  </section>
+
+  <!-- TIPS -->
+  <section class="reveal">
+    <div class="glass info-card">
+      <div class="ico">📌</div>
+      <h3>Tips y notas</h3>
+      <p>El salón cuenta con estacionamiento propio.<br>La fiesta es solo para mayores de <b>13 años</b>.<br>Cualquier duda, escribinos por WhatsApp.</p>
+    </div>
+  </section>
+
+  <!-- REGALOS -->
+  <section class="reveal">
+    <div class="glass info-card">
+      <div class="ico">🎁</div>
+      <h3>Regalos</h3>
+      <p>Si deseas regalarme algo más que tu hermosa presencia, podés colaborar con mi lluvia de sobres el día de la fiesta.</p>
+    </div>
+  </section>
+
+  <!-- INSTAGRAM -->
+  <section class="reveal">
+    <div class="glass insta">
+      <p class="sec-sub" style="margin-bottom:0;">Compartí tus fotos y videos</p>
+      <div class="hashtag" id="hashtag">#Mis15More</div>
+      <a class="pill-btn" id="instaBtn" target="_blank" rel="noopener">✦ Ver en Instagram</a>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="seal">Te esperamos para brillar juntos</div>
     <div class="small">More · Mis 15 · 12.12.2026 <span class="heart-pulse">✦</span></div>
@@ -272,16 +371,51 @@
 
 <script>
 /* =================================================================
-   ⚙️  CONFIGURACIÓN — editá solo estas 4 líneas
+   ⚙️  CONFIGURACIÓN — editá solo estas líneas
    ================================================================= */
 const FECHA_EVENTO = "2026-12-12T21:00:00-03:00";          // fecha y hora (Argentina)
 const DIRECCION    = "Pilar, Buenos Aires";                 // texto que se ve en la tarjeta
 const MAPS_QUERY   = "Pilar del Este, Pilar, Buenos Aires"; // qué busca el botón "Cómo llegar"
 const SHEET_URL    = "https://script.google.com/macros/s/AKfycbyTizPJe456Uj6rASuzVYItJNqFXkhvQJDK7QdQiJ4k-4qBi4gm4N-09SarRp8UbEOs/exec";     // URL del Apps Script (ver instrucciones)
+const MUSICA_URL   = "";                                    // URL de un mp3 para la música de fondo (opcional, vacío = sin música)
+const INSTAGRAM_TAG= "#Mis15More";                          // hashtag de Instagram
+const INSTAGRAM_URL= "https://www.instagram.com/explore/tags/mis15more/"; // link del botón "Ver en Instagram"
 /* ================================================================= */
 
 document.getElementById('addr').textContent = DIRECCION;
 document.getElementById('mapBtn').href = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(MAPS_QUERY);
+document.getElementById('hashtag').textContent = INSTAGRAM_TAG;
+document.getElementById('instaBtn').href = INSTAGRAM_URL;
+
+/* ---- AGENDAR (Google Calendar) ---- */
+(function(){
+  const start = new Date(FECHA_EVENTO);
+  const end = new Date(start.getTime() + 4*3600000);
+  const fmt = d => d.toISOString().replace(/[-:]|\.\d{3}/g,'');
+  const gcalUrl = "https://calendar.google.com/calendar/render?action=TEMPLATE"
+    + "&text=" + encodeURIComponent("Mis 15 - More")
+    + "&dates=" + fmt(start) + "/" + fmt(end)
+    + "&location=" + encodeURIComponent(MAPS_QUERY)
+    + "&details=" + encodeURIComponent("¡Te esperamos para celebrar mis 15!");
+  document.getElementById('agendarBtn').href = gcalUrl;
+})();
+
+/* ---- GATE / MÚSICA DE FONDO ---- */
+(function(){
+  const gate = document.getElementById('gate');
+  const audio = document.getElementById('bgAudio');
+  if(MUSICA_URL){ audio.src = MUSICA_URL; }
+  else{
+    document.getElementById('enterMusic').style.display = 'none';
+  }
+  function open(withMusic){
+    if(withMusic && MUSICA_URL){ audio.play().catch(()=>{}); }
+    gate.classList.add('hide');
+    document.body.classList.remove('locked');
+  }
+  document.getElementById('enterMusic').onclick = ()=>open(true);
+  document.getElementById('enterSilent').onclick = ()=>open(false);
+})();
 
 /* ---- SPARKLES ---- */
 (function(){
@@ -349,13 +483,13 @@ sendBtn.onclick=async()=>{
   const nombre=document.getElementById('nombre').value.trim();
   if(!nombre){
     const inp=document.getElementById('nombre');
-    inp.style.borderColor='var(--blush-deep)';
+    inp.style.borderColor='var(--wine-deep)';
     inp.placeholder='Por favor escribí tu nombre 💗';
     inp.focus();
     return;
   }
   sendBtn.disabled=true; sendBtn.textContent='Enviando…';
-  const payload={nombre, asiste, cantidad: asiste==="Sí"?qty:0, mensaje:""};
+  const payload={tipo:"rsvp", nombre, asiste, cantidad: asiste==="Sí"?qty:0, mensaje:""};
   try{
     if(SHEET_URL && SHEET_URL.indexOf("PEGA_AQUI")===-1){
       await fetch(SHEET_URL,{
@@ -378,12 +512,38 @@ sendBtn.onclick=async()=>{
   burst();
 };
 
+/* ---- SUGERIR CANCIÓN ---- */
+const sendMusicBtn=document.getElementById('sendMusic');
+sendMusicBtn.onclick=async()=>{
+  const cancion=document.getElementById('cancion').value.trim();
+  if(!cancion){
+    const inp=document.getElementById('cancion');
+    inp.style.borderColor='var(--wine-deep)';
+    inp.placeholder='Escribí una canción 🎶';
+    inp.focus();
+    return;
+  }
+  sendMusicBtn.disabled=true; sendMusicBtn.textContent='Enviando…';
+  const payload={tipo:"cancion", cancion};
+  try{
+    if(SHEET_URL && SHEET_URL.indexOf("PEGA_AQUI")===-1){
+      await fetch(SHEET_URL,{
+        method:'POST', mode:'no-cors',
+        headers:{'Content-Type':'text/plain;charset=utf-8'},
+        body:JSON.stringify(payload)
+      });
+    }
+  }catch(e){ /* no-cors no devuelve respuesta; igual queda registrado */ }
+  document.getElementById('musicForm').style.display='none';
+  document.getElementById('musicThanks').classList.add('show');
+};
+
 /* ---- CONFETTI / SPARKLE BURST ---- */
 function burst(){
   for(let i=0;i<40;i++){
     const c=document.createElement('div');
     c.style.cssText='position:fixed;z-index:99;left:50%;top:62%;width:9px;height:9px;border-radius:50%;pointer-events:none;';
-    const colors=['#ecdcb4','#d9c195','#f0cdd5','#f9e2e7','#ffffff'];
+    const colors=['#f0d9a3','#cfa356','#f0d3d8','#c98d98','#ffffff'];
     c.style.background=colors[i%colors.length];
     document.body.appendChild(c);
     const ang=Math.random()*Math.PI*2, dist=Math.random()*180+60;
