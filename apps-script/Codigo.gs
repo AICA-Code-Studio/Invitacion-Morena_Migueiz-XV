@@ -4,7 +4,7 @@
 // ============================================================
 
 var CARPETA_FOTOS = "1ePxLg4jjDmUne9i3A0AA-mNjn-WDZYFb";   // carpeta de Drive para las fotos
-var EMAIL_AVISO   = "matieguido@gmail.com";                 // mail que recibe el aviso de cada confirmación
+var EMAIL_AVISO   = "matieguido@gmail.com,mnosdeo@gmail.com"; // mails que reciben el aviso (separados por coma)
 
 function doPost(e) {
   try {
