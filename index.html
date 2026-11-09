@@ -110,6 +110,9 @@ section.dark .icon-btn:active .circle{background:#fff;color:var(--ink);}
 .btn{display:block;width:100%;padding:16px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);font-family:'Jost';font-size:12px;letter-spacing:.32em;text-transform:uppercase;cursor:pointer;transition:opacity .2s;}
 .btn:disabled{opacity:.5;}
 .btn.ghost{background:transparent;color:var(--ink);}
+.guest-block{border-left:1px solid #c9a35f;padding-left:12px;margin-bottom:16px;}
+.guest-block .field{margin-bottom:6px;}
+.g-diet{font-size:17px!important;}
 .guest{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
 .guest input{flex:1;}
 .guest button{background:none;border:none;font-size:22px;color:var(--ink-soft);cursor:pointer;padding:0 6px;}
@@ -340,7 +343,7 @@ section.dark .title em{background-image:linear-gradient(100deg,#fff 40%,#f4e2be 
             <button type="button" class="btn ghost" id="addGuest" style="padding:12px;">+ Agregar acompañante</button>
           </div>
           <div class="field" id="dietField">
-            <label>Restricción alimentaria (opcional)</label>
+            <label>Tu restricción alimentaria (opcional)</label>
             <input type="text" id="dieta" placeholder="Vegetariano, celíaco, alergias…" />
           </div>
           <button class="btn" id="send">Confirmar</button>
@@ -609,21 +612,20 @@ $('bSi').onclick = () => { asiste="Sí"; $('bSi').classList.add('act'); $('bNo')
 $('bNo').onclick = () => { asiste="No"; $('bNo').classList.add('act'); $('bSi').classList.remove('act'); $('qtyField').style.display='none'; $('dietField').style.display='none'; };
 $('addGuest').onclick = () => {
   if ($('guests').children.length >= 10) return;
-  const d = document.createElement('div'); d.className = 'field guest';
-  d.innerHTML = '<input type="text" placeholder="Nombre y apellido del acompañante" /><button type="button" aria-label="quitar">×</button>';
+  const d = document.createElement('div'); d.className = 'guest-block';
+  d.innerHTML = '<div class="field guest"><input type="text" class="g-name" placeholder="Nombre y apellido del acompañante" /><button type="button" aria-label="quitar">×</button></div>'
+    + '<div class="field g-diet-f"><input type="text" class="g-diet" placeholder="Su restricción alimentaria (opcional)" /></div>';
   d.querySelector('button').onclick = () => d.remove();
-  $('guests').appendChild(d); d.querySelector('input').focus();
+  $('guests').appendChild(d); d.querySelector('.g-name').focus();
 };
 $('send').onclick = async () => {
   const nombre = $('nombre').value.trim();
   if (!nombre) { $('nombre').placeholder = 'Por favor escribí tu nombre'; $('nombre').focus(); return; }
-  const acomp = asiste==="Sí" ? [...$('guests').querySelectorAll('input')].map(i=>i.value.trim()).filter(Boolean) : [];
+  const bloques = asiste==="Sí" ? [...$('guests').querySelectorAll('.guest-block')].map(b => ({n:b.querySelector('.g-name').value.trim(), r:b.querySelector('.g-diet').value.trim()})).filter(x => x.n) : [];
+  const acomp = bloques.map(x => x.n);
   $('send').disabled = true; $('send').textContent = 'Enviando…';
   const dieta = $('dieta').value.trim();
-  const notas = [];
-  if (acomp.length) notas.push("Acompañantes: " + acomp.join(", "));
-  if (dieta) notas.push("Restricción: " + dieta);
-  await post({tipo:"rsvp", nombre, asiste, cantidad: asiste==="Sí" ? 1+acomp.length : 0, acompanantes: acomp.join(", "), lista: acomp, mensaje: notas.join(" | ")});
+  await post({tipo:"rsvp", nombre, asiste, cantidad: asiste==="Sí" ? 1+acomp.length : 0, acompanantes: acomp.join(", "), lista: acomp, restricciones: bloques.map(x => x.r), mensaje: dieta ? "Restricción: "+dieta : ""});
   $('form').style.display = 'none'; $('thanks').classList.add('show');
   const n = nombre.split(' ')[0];
   celebrate(nombre, asiste === "Sí");

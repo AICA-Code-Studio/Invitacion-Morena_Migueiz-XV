@@ -31,17 +31,22 @@ function guardarConfirmacion(data) {
   lista = lista.map(function (n) { return n.toString().trim(); }).filter(String);
   if (asiste !== "Sí") lista = [];
 
+  var restr = data.restricciones || [];
   var ahora = new Date();
   // Columnas: Fecha | Nombre | Asiste | Tipo | Confirmado por | Notas
   var filas = [[ahora, nombre, asiste, "Titular", nombre, notas]];
-  lista.forEach(function (n) { filas.push([ahora, n, asiste, "Acompañante", nombre, ""]); });
+  lista.forEach(function (n, i) {
+    var r = (restr[i] || "").toString().trim();
+    filas.push([ahora, n, asiste, "Acompañante", nombre, r ? "Restricción: " + r : ""]);
+  });
   sheet.getRange(sheet.getLastRow() + 1, 1, filas.length, 6).setValues(filas);
 
   if (asiste === "Sí") {
     var asunto  = "¡Nueva confirmación de " + nombre + "!";
     var mensaje = nombre + " confirmó asistencia para " + filas.length + " persona(s).";
-    if (lista.length) mensaje += "\nAcompañantes: " + lista.join(", ");
-    if (notas)        mensaje += "\n" + notas;
+    filas.forEach(function (f) {
+      mensaje += "\n- " + f[1] + (f[5] ? " (" + f[5] + ")" : "");
+    });
     MailApp.sendEmail(EMAIL_AVISO, asunto, mensaje);
   }
   return ok();
